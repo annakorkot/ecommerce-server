@@ -3,17 +3,6 @@ from .models import Category,Product
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 User = get_user_model()
-class CategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Category
-        fields = '__all__'
-
-
-class ProductSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Product
-        fields = '__all__'
-
 
 class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -34,3 +23,16 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('first_name' ,'last_name','email')
+        
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields =['id','name','description']
+
+
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = '__all__'
+
+

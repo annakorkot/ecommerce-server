@@ -27,7 +27,7 @@ class RegisterView(APIView):
 
         return Response(user.data,status=status.HTTP_201_CREATED)
 class RetrieveUserView(APIView):
-    premissions_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self,request):
         user = request.user

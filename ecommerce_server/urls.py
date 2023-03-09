@@ -17,15 +17,13 @@ from django.contrib import admin
 from django.urls import path ,include
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
-    TokenRefreshView,
-    TokenVerifyView
+    TokenRefreshView
 )
 
 
 urlpatterns = [
-    path('api/token/', TokenObtainPairView.as_view()),
-    path('api/token/refresh/', TokenRefreshView.as_view()),
-    path('api/token/verify/', TokenVerifyView.as_view()),
+    path('token/', TokenObtainPairView.as_view()),
+    path('token/refresh/', TokenRefreshView.as_view()),
     path('', include('ecommerce_app.urls')),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 

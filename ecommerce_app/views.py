@@ -12,20 +12,15 @@ class RegisterView(APIView):
 
     def post(self,request):
         data = request.data
-        first_name = data['first_name']
-        last_name = data['last_name']
-        email = data['email']
-        password = data['password']
-
         
         serializer = UserCreateSerializer(data=data)
         if not serializer.is_valid():
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
         user = serializer.create(serializer.validated_data)
-        user = UserSerializer(user)
+        user_serializer = UserSerializer(user)
 
-        return Response(user.data,status=status.HTTP_201_CREATED)
+        return Response(user_serializer.data,status=status.HTTP_201_CREATED)
 class RetrieveUserView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -35,6 +30,7 @@ class RetrieveUserView(APIView):
 
         return Response(user.data , status=status.HTTP_200_OK)
 
+
 @api_view(['GET', 'POST'])
 def product_list(request):
 
@@ -43,7 +39,11 @@ def product_list(request):
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
 
-    elif request.method == 'POST':
+
+class productDetail(APIView):
+    permission_classes = [permissions.IsAuthenticated , permissions.IsAdminUser]
+
+    def post(self,request):
         serializer = ProductSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -51,28 +51,35 @@ def product_list(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def product_detail(request, pk):
+        
+    def get(self ,request,pk):
+        try:
+            product = Product.objects.get(pk=pk)
+        except Product.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
-    try:
-        product = Product.objects.get(pk=pk)
-    except Product.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        product_serializer =ProductSerializer(product)
+        return Response(product_serializer.data)
+    def put(self,request,pk):
+        try:
+            product = Product.objects.get(pk=pk)
+        except Product.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if request.method == 'GET':
-        serializer = ProductSerializer(product)
-        return Response(serializer.data)
-
-    elif request.method == 'PUT':
         serializer = ProductSerializer(product, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    elif request.method == 'DELETE':
+    def delete(self,request,pk):
+        try:
+            product = Product.objects.get(pk=pk)
+        except Product.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         product.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 @api_view(['GET', 'POST'])
 def category_list(request):
@@ -82,9 +89,4 @@ def category_list(request):
         serializer = CategorySerializer(categories, many=True)
         return Response(serializer.data)
 
-    elif request.method == 'POST':
-        serializer = CategorySerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+

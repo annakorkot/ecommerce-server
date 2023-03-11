@@ -89,4 +89,15 @@ def category_list(request):
         serializer = CategorySerializer(categories, many=True)
         return Response(serializer.data)
 
-
+@api_view(['GET'])
+def get_products_by_category(request,pk):
+    if request.method == 'GET':
+        try:
+            category = Category.objects.get(pk=pk)
+            products = Product.objects.filter(category=pk)
+            product_serializer = ProductSerializer(products,many= True)
+            return Response(product_serializer.data)
+        except Category.DoesNotExist:   
+            return Response(status=status.HTTP_404_NOT_FOUND)
+   
+        

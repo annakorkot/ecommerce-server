@@ -21,6 +21,7 @@ class RegisterView(APIView):
         user_serializer = UserSerializer(user)
 
         return Response(user_serializer.data,status=status.HTTP_201_CREATED)
+        
 class RetrieveUserView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -30,21 +31,23 @@ class RetrieveUserView(APIView):
 
         return Response(user.data , status=status.HTTP_200_OK)
 
-
-@api_view(['GET', 'POST'])
+@api_view(['GET'])
 def product_list(request):
-
-    if request.method == 'GET':
+    if request.method == "GET":
         products = Product.objects.all()
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
 
-
-class productDetail(APIView):
-    permission_classes = [permissions.IsAuthenticated , permissions.IsAdminUser]
+class ProductView(APIView):
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
 
     def post(self,request):
+        if 'id' in request.data:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
         serializer = ProductSerializer(data=request.data)
+
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -52,7 +55,7 @@ class productDetail(APIView):
 
 
         
-    def get(self ,request,pk):
+    def get(self ,request,pk=None):
         try:
             product = Product.objects.get(pk=pk)
         except Product.DoesNotExist:
@@ -60,6 +63,7 @@ class productDetail(APIView):
 
         product_serializer =ProductSerializer(product)
         return Response(product_serializer.data)
+
     def put(self,request,pk):
         try:
             product = Product.objects.get(pk=pk)

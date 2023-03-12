@@ -1,13 +1,14 @@
 from django.urls import path
 from . import views
-from .views import RegisterView , RetrieveUserView ,productDetail
+from .views import RegisterView , RetrieveUserView ,ProductView
 
 
 urlpatterns = [
 	path('register/',RegisterView.as_view()),
 	path('me/',RetrieveUserView.as_view()),
-	path('product/', views.product_list, name="product-list"),
-	path('product/<str:pk>', productDetail.as_view(), name="product"),
+	path('product-list/', views.product_list, name="product-list"),
+	path('product/', ProductView.as_view(), name="product"),
+	path('product/<str:pk>', ProductView.as_view(), name="product"),
 	#path('product-detail/<str:pk>/', productDetail.as_view(), name="product-detail"),
 	#path('product-create/', views.product_list, name="product-create"),
 	# path('product-update/<str:pk>/', productDetail.as_view(), name="product-update"),
